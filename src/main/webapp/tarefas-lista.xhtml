@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<f:view>
+    <h:head>
+        <title>Lista de Tarefas</title>
+    </h:head>
+    <h:body style="margin: 0; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; font-family: Arial, sans-serif;">
+        <div style="border: 1px solid #ccc; border-radius: 10px; padding: 0; max-width: 1200px; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div style="background-color: #f0f0f0; padding: 15px; border-radius: 10px 10px 0 0; text-align: center; border-bottom: 1px solid #ccc;">
+                <h2 style="margin: 0; font-size: 18px; color: #333;">Sistema de Gestão de Tarefas</h2>
+            </div>
+
+            <div style="padding: 30px;">
+                <h3 style="text-align: center; margin-bottom: 25px; color: #555;">Gerenciar Tarefas</h3>
+
+                <h:form>
+                    <!-- <h:messages /> REMOVIDO PARA ELIMINAR ALERTAS -->
+
+                    <!-- Botões de ação -->
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <h:commandButton value="Nova Tarefa" action="#{tarefaListaBean.novaTarefa}"
+                                       style="margin-right: 10px; padding: 8px 15px;" />
+                        <h:commandButton value="Voltar ao Menu" action="index?faces-redirect=true"
+                                       style="padding: 8px 15px;" />
+                    </div>
+
+                    <!-- Painel de Filtros -->
+                    <h:panelGroup id="painelFiltros">
+                        <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+                            <h4 style="margin-top: 0; margin-bottom: 15px; color: #495057; text-align: center;">
+                                <span style="font-size: 16px;">Filtros de Busca</span>
+                            </h4>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                                <!-- Filtro por Número -->
+                                <div>
+                                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #495057;">Número:</label>
+                                    <h:inputText id="filtroNumero" value="#{tarefaListaBean.filtroId}"
+                                               placeholder="Digite o número da tarefa"
+                                               style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;" />
+                                </div>
+
+                                <!-- Filtro por Título/Descrição -->
+                                <div>
+                                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #495057;">Título/Descrição:</label>
+                                    <h:inputText id="filtroTexto" value="#{tarefaListaBean.filtroTexto}"
+                                               placeholder="Digite parte do título ou descrição"
+                                               style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;" />
+                                </div>
+
+                                <!-- Filtro por Responsável -->
+                                <div>
+                                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #495057;">Responsável:</label>
+                                    <h:selectOneMenu id="filtroResponsavel" value="#{tarefaListaBean.filtroResponsavelId}"
+                                                   style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;">
+                                        <f:selectItem itemLabel="-- Todos os responsáveis --" itemValue="" />
+                                        <f:selectItems value="#{tarefaListaBean.responsaveis}"
+                                                     var="resp"
+                                                     itemValue="#{resp.id}"
+                                                     itemLabel="#{resp.nome}" />
+                                    </h:selectOneMenu>
+                                </div>
+
+                                <!-- Filtro por Situação -->
+                                <div>
+                                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #495057;">Situação:</label>
+                                    <h:selectOneMenu id="filtroStatus" value="#{tarefaListaBean.filtroStatus}"
+                                                   style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;">
+                                        <f:selectItem itemLabel="-- Todas as situações --" itemValue="" />
+                                        <f:selectItems value="#{tarefaListaBean.statusValues}"
+                                                     var="status"
+                                                     itemValue="#{status}"
+                                                     itemLabel="#{status.descricao}" />
+                                    </h:selectOneMenu>
+                                </div>
+                            </div>
+
+                            <!-- Botões de ação dos filtros -->
+                            <div style="text-align: center; margin-top: 15px;">
+                                <h:commandButton value="Aplicar Filtros"
+                                               action="#{tarefaListaBean.aplicarFiltros}"
+                                               style="background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; margin-right: 10px; cursor: pointer;">
+                                    <f:ajax execute="filtroNumero filtroTexto filtroResponsavel filtroStatus" render="tabelaTarefas contadorResultados mensagemSemResultados mensagemSemTarefas" />
+                                </h:commandButton>
+                                <h:commandButton value="Limpar Filtros"
+                                               action="#{tarefaListaBean.limparFiltros}"
+                                               style="background-color: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+                                    <f:ajax execute="@this" render="tabelaTarefas contadorResultados painelFiltros mensagemSemResultados mensagemSemTarefas" />
+                                </h:commandButton>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <!-- Tabela única com headers e dados -->
+                    <div style="overflow-x: auto;">
+                        <h:dataTable id="tabelaTarefas"
+                                   value="#{tarefaListaBean.tarefasFiltradas}" var="tarefa"
+                                   border="1" cellpadding="8" cellspacing="0"
+                                   style="width: 100%; border-collapse: collapse; margin: 0 auto;">
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <span style="font-weight: bold; background-color: #f8f9fa; padding: 8px;">Número</span>
+                                </f:facet>
+                                <h:outputText value="#{tarefa.id}" />
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <span style="font-weight: bold; background-color: #f8f9fa; padding: 8px;">Título</span>
+                                </f:facet>
+                                <h:outputText value="#{tarefa.titulo}" />
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <span style="font-weight: bold; background-color: #f8f9fa; padding: 8px;">Responsável</span>
+                                </f:facet>
+                                <h:outputText value="#{tarefa.responsavel != null ? tarefa.responsavel.nome : 'Não atribuído'}" />
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <span style="font-weight: bold; background-color: #f8f9fa; padding: 8px;">Situação</span>
+                                </f:facet>
+                                <h:outputText value="#{tarefaListaBean.getStatusLabel(tarefa.status)}" />
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <span style="font-weight: bold; background-color: #f8f9fa; padding: 8px;">Ações</span>
+                                </f:facet>
+                                <h:commandButton value="Editar"
+                                               action="#{tarefaListaBean.editarTarefa(tarefa.id)}"
+                                               style="margin-right: 5px; padding: 4px 8px;" />
+                                <h:commandButton value="Concluir"
+                                               action="#{tarefaListaBean.concluirTarefa(tarefa)}"
+                                               rendered="#{tarefa.status != 'CONCLUIDO'}"
+                                               style="margin-right: 5px; padding: 4px 8px;" />
+                                <h:commandButton value="Excluir"
+                                               action="#{tarefaListaBean.excluirTarefa(tarefa)}"
+                                               onclick="return confirm('Tem certeza?')"
+                                               style="padding: 4px 8px;" />
+                            </h:column>
+                        </h:dataTable>
+
+                        <!-- Mensagem quando não há resultados - mostrada após a tabela -->
+                        <h:panelGroup id="mensagemSemResultados" rendered="#{empty tarefaListaBean.tarefasFiltradas and not empty tarefaListaBean.tarefas}">
+                            <div style="text-align: center; padding: 20px; color: #6c757d; font-style: italic; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; margin-top: 15px;">
+                                <span style="font-size: 14px;">Nenhuma tarefa encontrada com os filtros aplicados.</span>
+                                <br />
+                                <h:commandButton value="🗑️ Limpar Filtros"
+                                               action="#{tarefaListaBean.limparFiltros}"
+                                               style="background-color: #6c757d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-top: 8px; font-size: 12px;">
+                                    <f:ajax render="tabelaTarefas contadorResultados painelFiltros mensagemSemResultados mensagemSemTarefas" />
+                                </h:commandButton>
+                            </div>
+                        </h:panelGroup>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </h:body>
+</f:view>
+</html>

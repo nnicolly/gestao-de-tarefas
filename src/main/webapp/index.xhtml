@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<f:view>
+    <h:head>
+        <title>Gestão de Tarefas</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body style="margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: Arial, sans-serif;">
+        <div style="border: 1px solid #ccc; border-radius: 10px; padding: 0; max-width: 500px; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div style="background-color: #f0f0f0; padding: 15px; border-radius: 10px 10px 0 0; text-align: center; border-bottom: 1px solid #ccc;">
+                <h2 style="margin: 0; font-size: 18px; color: #333;">Sistema de Gestão de Tarefas</h2>
+            </div>
+
+            <div style="padding: 30px;">
+                <h3 style="text-align: center; margin-bottom: 25px; color: #555;">Menu Principal</h3>
+                <h:form>
+                    <p:panel style="width: 100%; border: none;">
+                        <p:commandButton value="Listar Tarefas"
+                                       action="tarefas-lista?faces-redirect=true"
+                                       icon="pi pi-list"
+                                       styleClass="ui-button-info"
+                                       style="width: 100%; margin-bottom: 15px; padding: 12px;" />
+
+                        <p:commandButton value="Nova Tarefa"
+                                       action="tarefas-form?faces-redirect=true"
+                                       icon="pi pi-plus"
+                                       styleClass="ui-button-success"
+                                       style="width: 100%; margin-bottom: 15px; padding: 12px;" />
+
+                        <p:commandButton value="Gerenciar Responsáveis"
+                                       action="responsaveis-lista?faces-redirect=true"
+                                       icon="pi pi-users"
+                                       styleClass="ui-button-warning"
+                                       style="width: 100%; padding: 12px;" />
+                    </p:panel>
+                </h:form>
+            </div>
+        </div>
+    </h:body>
+</f:view>
+</html>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<f:view>
+    <f:metadata>
+        <f:viewParam name="id" value="#{tarefaListaBean.tarefaId}" />
+        <f:viewAction action="#{tarefaListaBean.carregarParaEdicao}" />
+    </f:metadata>
+
+    <h:head>
+        <title>#{tarefaListaBean.edicaoTarefa ? 'Editar' : 'Nova'} Tarefa</title>
+    </h:head>
+    <h:body style="margin: 0; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; font-family: Arial, sans-serif;">
+        <div style="border: 1px solid #ccc; border-radius: 10px; padding: 0; max-width: 600px; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div style="background-color: #f0f0f0; padding: 15px; border-radius: 10px 10px 0 0; text-align: center; border-bottom: 1px solid #ccc;">
+                <h2 style="margin: 0; font-size: 18px; color: #333;">Sistema de Gestão de Tarefas</h2>
+            </div>
+
+            <div style="padding: 30px;">
+                <h3 style="text-align: center; margin-bottom: 25px; color: #555;">#{tarefaListaBean.edicaoTarefa ? 'Editar' : 'Nova'} Tarefa</h3>
+
+                <h:form>
+                    <h:messages />
+
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px; vertical-align: top; width: 30%;">
+                                <h:outputLabel for="titulo" value="Título:" style="font-weight: bold;" />
+                            </td>
+                            <td style="padding: 8px;">
+                                <h:inputText id="titulo"
+                                           value="#{tarefaListaBean.tarefaSelecionada.titulo}"
+                                           required="true"
+                                           requiredMessage="Título é obrigatório"
+                                           maxlength="120"
+                                           style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; vertical-align: top;">
+                                <h:outputLabel for="descricao" value="Descrição:" style="font-weight: bold;" />
+                            </td>
+                            <td style="padding: 8px;">
+                                <h:inputTextarea id="descricao"
+                                               value="#{tarefaListaBean.tarefaSelecionada.descricao}"
+                                               rows="4"
+                                               maxlength="2000"
+                                               style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; vertical-align: top;">
+                                <h:outputLabel for="responsavel" value="Responsável:" style="font-weight: bold;" />
+                            </td>
+                            <td style="padding: 8px;">
+                                <h:selectOneMenu id="responsavel"
+                                               value="#{tarefaListaBean.responsavelSelecionadoId}"
+                                               style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                                    <f:selectItem itemLabel="Selecione um responsável" itemValue="" />
+                                    <f:selectItems value="#{tarefaListaBean.responsaveis}"
+                                                 var="resp"
+                                                 itemLabel="#{resp.nome}"
+                                                 itemValue="#{resp.id}" />
+                                </h:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; vertical-align: top;">
+                                <h:outputLabel for="prioridade" value="Prioridade:" style="font-weight: bold;" />
+                            </td>
+                            <td style="padding: 8px;">
+                                <h:selectOneMenu id="prioridade"
+                                               value="#{tarefaListaBean.tarefaSelecionada.prioridade}"
+                                               style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                                    <f:selectItem itemLabel="Selecione uma prioridade" itemValue="#{null}" />
+                                    <f:selectItems value="#{tarefaListaBean.prioridadeValues}"
+                                                 var="prioridade"
+                                                 itemLabel="#{tarefaListaBean.getPrioridadeLabel(prioridade)}"
+                                                 itemValue="#{prioridade}" />
+                                </h:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; vertical-align: top;">
+                                <h:outputLabel for="deadline" value="Prazo:" style="font-weight: bold;" />
+                            </td>
+                            <td style="padding: 8px;">
+                                <p:datePicker id="deadline"
+                                            value="#{tarefaListaBean.tarefaSelecionada.deadline}"
+                                            pattern="dd/MM/yyyy"
+                                            showIcon="true"
+                                            placeholder="Selecione uma data"
+                                            style="width: 100%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding: 20px 8px; text-align: center;">
+                                <h:commandButton value="Salvar" action="#{tarefaListaBean.salvarTarefa}"
+                                               style="margin-right: 10px; padding: 8px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;" />
+                                <h:commandButton value="Cancelar" action="#{tarefaListaBean.cancelarTarefa}" immediate="true"
+                                               style="padding: 8px 20px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;" />
+                            </td>
+                        </tr>
+                    </table>
+                </h:form>
+            </div>
+        </div>
+    </h:body>
+</f:view>
+</html>
